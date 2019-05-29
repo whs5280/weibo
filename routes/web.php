@@ -11,6 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+//静态页面
+Route::get('/', 'StaticPagesController@home')->name('home');
+Route::get('/help', 'StaticPagesController@help')->name('help');
+Route::get('/about', 'StaticPagesController@about')->name('about');
+
+//restful
+Route::resource('users','UsersController');
+
+
+//登录
+Route::get('signup', 'UsersController@create')->name('signup');
+
