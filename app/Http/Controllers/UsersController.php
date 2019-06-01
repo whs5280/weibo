@@ -58,7 +58,6 @@ class UsersController extends Controller
 
         //注册成功自动登陆
         Auth::login($user);
-
         session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
 
         return redirect()->route('users.show',[$user]);
@@ -67,17 +66,33 @@ class UsersController extends Controller
     /*
      * 编辑用户个人资料的页面
      */
-    public function edit()
+    public function edit(User $user)
     {
-
+        return view('users.edit', compact('user'));
     }
 
     /*
      * 更新用户
      */
-    public function update()
+    public function update(User $user,Request $request)
     {
+        $this->validate($request,[
+            'name' => 'required|max:25',
+            'password' => 'required|confirmed|min:6',
+        ]);
 
+        $name = $request->input('name','');
+        $password = $request->input('password','');
+
+        $date = [
+            'name' => $name,
+            'password' => Hash::make($password),
+        ];
+
+        $user->update($date);
+        session()->flash('success', '个人资料更新成功！');
+        
+        return redirect()->route('users.edit',$user->id);
     }
 
     /*
