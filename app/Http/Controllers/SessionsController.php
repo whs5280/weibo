@@ -28,13 +28,15 @@ class SessionsController extends Controller
 
         $email = $request->input('email','');
         $password = $request->input('password','');
+        $remember_flag = $request->has('remember');
 
         $date = [
             'email' => $email,
             'password' => $password,
         ];
 
-        if(Auth::attempt($date)){
+        //attempt的第一个参数就登陆的信息，第二个是记住我，参数类型为boolean
+        if(Auth::attempt($date,$remember_flag)){
 
             session()->flash('success', '欢迎回来！');
             return redirect()->route('users.show',[Auth::user()]);
