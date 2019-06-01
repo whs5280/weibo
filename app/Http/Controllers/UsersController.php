@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -41,6 +42,21 @@ class UsersController extends Controller
             'email' => 'required|email|unique:users|max:255',
             'password' => 'required|confirmed|min:6',
         ]);
+
+        $name = $request->input('name','');
+        $email = $request->input('email','');
+        $password = $request->input('password','');
+
+        $date = [
+          'name' => $name,
+          'email' => $email,
+          'password' => Hash::make($password),
+        ];
+
+        $user = User::create($date);
+        session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
+
+        return redirect()->route('users.show',[$user]);
     }
 
     /*
