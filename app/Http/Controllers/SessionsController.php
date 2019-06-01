@@ -31,10 +31,10 @@ class SessionsController extends Controller
 
         $date = [
             'email' => $email,
-            'password' => Hash::make($password),
+            'password' => $password,
         ];
 
-        if(Auth::attempt([$date])){
+        if(Auth::attempt($date)){
 
             session()->flash('success', '欢迎回来！');
             return redirect()->route('users.show',[Auth::user()]);
@@ -51,6 +51,8 @@ class SessionsController extends Controller
      */
     public function destroy()
     {
-
+        Auth::logout();
+        session()->flash('success','您已成功退出！');
+        return redirect('login');
     }
 }
