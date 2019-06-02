@@ -21,7 +21,6 @@ Route::get('/about', 'StaticPagesController@about')->name('about');
 //restful
 Route::resource('users','UsersController');
 
-
 //登录
 Route::get('signup', 'UsersController@create')->name('signup');
 
