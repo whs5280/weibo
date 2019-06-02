@@ -29,3 +29,6 @@ Route::get('login', 'SessionsController@create')->name('login');
 Route::post('login', 'SessionsController@store')->name('login');
 Route::delete('logout', 'SessionsController@destroy')->name('logout');
 
+//激活邮箱
+Route::get('signup/confirm/{token}','UsersController@confirmEmail');
+

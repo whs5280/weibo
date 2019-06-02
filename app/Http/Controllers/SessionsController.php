@@ -44,9 +44,18 @@ class SessionsController extends Controller
         //attempt的第一个参数就登陆的信息，第二个是记住我，参数类型为boolean
         if(Auth::attempt($date,$remember_flag)){
 
-            session()->flash('success', '欢迎回来！');
-            $fallback = route('users.show',[Auth::user()]);
-            return redirect()->intended($fallback);
+            //判断邮箱是否已经被激活
+            if(Auth::user()->activated){
+
+                session()->flash('success', '欢迎回来！');
+                $fallback = route('users.show',[Auth::user()]);
+                return redirect()->intended($fallback);
+            }else{
+
+                Auth::logout();
+                session()->flash('warning', '你的账号未激活，请检查邮箱中的注册邮件进行激活。');
+                return redirect('login');
+            }
 
         }else{
 

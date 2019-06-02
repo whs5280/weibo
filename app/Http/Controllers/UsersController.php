@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
@@ -13,7 +14,7 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('auth',[
-            'except' => ['show','create','store','index']
+            'except' => ['show','create','store','index','confirmEmail']
         ]);
 
         $this->middleware('guest',[
@@ -70,11 +71,9 @@ class UsersController extends Controller
 
         $user = User::create($date);
 
-        //注册成功自动登陆
-        Auth::login($user);
-        session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
-
-        return redirect()->route('users.show',[$user]);
+        //发送邮件
+        $this->sendEmailConfirmationTo($user);
+        return redirect('signup');
     }
 
     /*
@@ -121,5 +120,50 @@ class UsersController extends Controller
         $user->delete();
         session()->flash('success','成功删除用户！');
         return back();
+    }
+
+    /*
+     * 发送邮件
+     */
+    public function sendEmailConfirmationTo($user)
+    {
+
+        $url = 'http://www.weibo.test:8080/signup/confirm/'.$user->activation_token;
+        $to = $user->email;
+        $subject = '感谢注册 Weibo 应用！请确认你的邮箱。';
+
+        Mail::send('emails.confirm',['url'=>$url],function ($message) use ($to,$subject){
+
+            $message->to($to)->subject($subject);
+        });
+
+        if(count(Mail::failures()) < 1){
+
+            session()->flash('success','邮件已经发生，请查看您的邮箱~');
+            //return redirect('login');
+        }else{
+
+            //加入队列一直发送
+            session()->flash('error','网络出现了问题，邮件正在发送~');
+        }
+
+    }
+
+    /*
+     * 邮箱激活
+     */
+    public function confirmEmail($token){
+
+        $user = User::where('activation_token',$token)->firstOrFail();
+
+        $user->activated = true;
+        $user->email_verified_at = now();
+        $user->activation_token = null;
+        $user->save();
+
+        //注册成功自动登陆
+        Auth::login($user);
+        session()->flash('success','恭喜你，激活成功！');
+        return redirect()->route('users.show',[$user]);
     }
 }
