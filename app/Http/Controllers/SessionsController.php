@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('guest',[
+            'only' => ['create']
+        ]);
+    }
 
     /*
      * 创建登录页面
@@ -39,7 +45,8 @@ class SessionsController extends Controller
         if(Auth::attempt($date,$remember_flag)){
 
             session()->flash('success', '欢迎回来！');
-            return redirect()->route('users.show',[Auth::user()]);
+            $fallback = route('users.show',[Auth::user()]);
+            return redirect()->intended($fallback);
 
         }else{
 
