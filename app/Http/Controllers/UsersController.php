@@ -116,8 +116,10 @@ class UsersController extends Controller
     /*
      * 删除用户
      */
-    public function destroy()
+    public function destroy(User $user)
     {
-
+        $user->delete();
+        session()->flash('success','成功删除用户！');
+        return back();
     }
 }
