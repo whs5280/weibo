@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Status extends Model
 {
-    //一个用户可以有多条微博
+
+    protected $fillable = ['content'];
+
+    //多对一
     public function user()
     {
         return $this->belongsTo(User::class);
