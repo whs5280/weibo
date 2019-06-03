@@ -12,6 +12,12 @@
 
                 @include('shared.errors')
 
+                <div class="gravatar_edit" style="margin: 15px auto;text-align: center;">
+                    <a href="http://gravatar.com/emails" target="_blank">
+                        <img src="{{ $user->gravatar('120') }}" alt="{{ $user->name }}" class="gravatar"/>
+                    </a>
+                </div>
+
                 <form method="POST" action="{{ route('users.update', $user->id )}}">
 
                     {{ csrf_field() }}
