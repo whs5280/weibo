@@ -9,6 +9,8 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+package-lock.json
+
 ### Example user template template
 ### Example user template
 
